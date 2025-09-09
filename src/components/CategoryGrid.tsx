@@ -1,5 +1,6 @@
 import CategoryCard from "./CategoryCard";
 import { useMockStore } from "@/hooks/useMockStore";
+import { BookOpen, FileText, GraduationCap, Wrench } from "lucide-react";
 
 interface CategoryGridProps {
   onCategorySelect: (categoryId: string) => void;
@@ -9,13 +10,13 @@ const CategoryGrid = ({ onCategorySelect }: CategoryGridProps) => {
   const { categories, getResourcesByCategory } = useMockStore();
 
   const getCategoryIcon = (slug: string) => {
-    const iconMap: Record<string, string> = {
-      guides: "📖",
-      sops: "📋", 
-      tutorials: "🎓",
-      troubleshooting: "🔧"
+    const iconMap: Record<string, any> = {
+      guides: BookOpen,
+      sops: FileText, 
+      tutorials: GraduationCap,
+      troubleshooting: Wrench
     };
-    return iconMap[slug] || "📄";
+    return iconMap[slug] || FileText;
   };
 
   const getCategoryColor = (slug: string) => {
