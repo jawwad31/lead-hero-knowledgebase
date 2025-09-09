@@ -1,91 +1,98 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Eye, Calendar } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useMockStore } from "@/hooks/useMockStore";
 
 const Dashboard = () => {
-  // Mock data
-  const stats = {
-    totalResources: 47,
-    publishedCount: 42,
-    draftCount: 5
-  };
+  const { stats, categories } = useMockStore();
 
-  const recentResources = [
-    { id: 1, title: "Getting Started with React Hooks", type: "Guide", updatedAt: "2024-03-15" },
-    { id: 2, title: "Deployment Best Practices", type: "SOP", updatedAt: "2024-03-14" },
-    { id: 3, title: "API Design Guidelines", type: "Tutorial", updatedAt: "2024-03-13" },
-    { id: 4, title: "Code Review Process", type: "SOP", updatedAt: "2024-03-12" },
-    { id: 5, title: "Testing Strategies", type: "Guide", updatedAt: "2024-03-11" }
-  ];
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString();
+  };
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-text-primary">Dashboard</h1>
-        <p className="text-text-secondary">Overview of your knowledge base</p>
+        <p className="text-text-secondary mt-2">Overview of your knowledge base</p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Resources</CardTitle>
-            <FileText className="h-4 w-4 text-text-muted" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-text-primary">{stats.totalResources}</div>
-            <p className="text-xs text-text-muted">All resources in the system</p>
+            <div className="text-2xl font-bold">{stats.totalResources}</div>
+            <p className="text-xs text-text-muted">All resources</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Published</CardTitle>
-            <Eye className="h-4 w-4 text-text-muted" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-text-primary">{stats.publishedCount}</div>
-            <p className="text-xs text-text-muted">Currently visible to users</p>
+            <div className="text-2xl font-bold">{stats.publishedResources}</div>
+            <p className="text-xs text-text-muted">
+              {Math.round((stats.publishedResources / stats.totalResources) * 100)}% of total
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Drafts</CardTitle>
-            <Calendar className="h-4 w-4 text-text-muted" />
+            <CardTitle className="text-sm font-medium">Total Views</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-text-primary">{stats.draftCount}</div>
-            <p className="text-xs text-text-muted">Unpublished resources</p>
+            <div className="text-2xl font-bold">{stats.totalViews}</div>
+            <p className="text-xs text-text-muted">All-time views</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Categories</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{categories.length}</div>
+            <p className="text-xs text-text-muted">Active categories</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Recent Resources */}
+      {/* Recent Activity */}
       <Card>
         <CardHeader>
-          <CardTitle>Recently Edited</CardTitle>
+          <CardTitle>Recently Edited Resources</CardTitle>
+          <CardDescription>Last 5 resources that were modified</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {recentResources.map((resource) => (
-              <div key={resource.id} className="flex items-center justify-between py-2 border-b border-card-border last:border-0">
-                <div>
-                  <p className="font-medium text-text-primary">{resource.title}</p>
-                  <p className="text-sm text-text-secondary">{resource.type}</p>
+            {stats.recentlyEdited.map((resource) => (
+              <div key={resource.id} className="flex items-center justify-between p-3 border rounded-md">
+                <div className="flex-1">
+                  <div className="font-medium text-text-primary">{resource.title}</div>
+                  <div className="text-sm text-text-secondary">
+                    Updated {formatDate(resource.updatedAt)} • {resource.author}
+                  </div>
                 </div>
-                <div className="text-sm text-text-muted">
-                  {new Date(resource.updatedAt).toLocaleDateString()}
+                <div className="flex items-center gap-2">
+                  <Badge variant={resource.published ? "default" : "secondary"}>
+                    {resource.published ? "Published" : "Draft"}
+                  </Badge>
+                  <Badge variant="outline">{resource.type}</Badge>
                 </div>
               </div>
             ))}
+            {stats.recentlyEdited.length === 0 && (
+              <div className="text-sm text-text-muted text-center py-4">
+                No resources found
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
-
-      {/* TODO Block */}
-      <div className="text-sm text-text-muted p-4 bg-muted/50 rounded border border-dashed border-card-border">
-        TODO: Add real-time stats, analytics charts, and database integration
-      </div>
     </div>
   );
 };

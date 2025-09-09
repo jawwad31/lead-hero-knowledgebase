@@ -1,49 +1,18 @@
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { Plus, Edit } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Edit, Eye, Trash2 } from "lucide-react";
+import { useMockStore } from "@/hooks/useMockStore";
 
 const Resources = () => {
-  // Mock data
-  const resources = [
-    {
-      id: 1,
-      title: "Getting Started with React Hooks",
-      type: "Guide",
-      category: "Development",
-      status: "Published",
-      updatedAt: "2024-03-15"
-    },
-    {
-      id: 2,
-      title: "Deployment Best Practices",
-      type: "SOP",
-      category: "DevOps",
-      status: "Published",
-      updatedAt: "2024-03-14"
-    },
-    {
-      id: 3,
-      title: "API Design Guidelines",
-      type: "Tutorial",
-      category: "Backend",
-      status: "Draft",
-      updatedAt: "2024-03-13"
-    },
-    {
-      id: 4,
-      title: "Code Review Process",
-      type: "SOP",
-      category: "Development",
-      status: "Published",
-      updatedAt: "2024-03-12"
-    }
-  ];
+  const { resources, categories, deleteResource, getCategoryById, getViewCount } = useMockStore();
 
-  const getStatusColor = (status: string) => {
-    return status === "Published" ? "default" : "secondary";
+  const handleDelete = (id: string) => {
+    if (confirm('Are you sure you want to delete this resource?')) {
+      deleteResource(id);
+    }
   };
 
   return (
@@ -73,44 +42,60 @@ const Resources = () => {
                 <TableHead>Type</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Views</TableHead>
                 <TableHead>Updated</TableHead>
-                <TableHead className="w-[100px]">Actions</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {resources.map((resource) => (
-                <TableRow key={resource.id}>
-                  <TableCell className="font-medium">{resource.title}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{resource.type}</Badge>
-                  </TableCell>
-                  <TableCell>{resource.category}</TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusColor(resource.status)}>
-                      {resource.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-text-muted">
-                    {new Date(resource.updatedAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <Link to={`/admin/resources/${resource.id}`}>
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {resources.map((resource) => {
+                const category = getCategoryById(resource.categoryId);
+                const viewCount = getViewCount(resource.id);
+                
+                return (
+                  <TableRow key={resource.id}>
+                    <TableCell className="font-medium">{resource.title}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="capitalize">{resource.type}</Badge>
+                    </TableCell>
+                    <TableCell>{category?.name || 'Unknown'}</TableCell>
+                    <TableCell>
+                      <Badge variant={resource.published ? "default" : "secondary"}>
+                        {resource.published ? "Published" : "Draft"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Eye className="h-3 w-3" />
+                        {viewCount}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {new Date(resource.updatedAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="sm" asChild>
+                          <Link to={`/admin/resources/${resource.id}`}>
+                            <Edit className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleDelete(resource.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
-
-      {/* TODO Block */}
-      <div className="text-sm text-text-muted p-4 bg-muted/50 rounded border border-dashed border-card-border">
-        TODO: Add search/filtering, bulk actions, pagination, and database integration
-      </div>
     </div>
   );
 };

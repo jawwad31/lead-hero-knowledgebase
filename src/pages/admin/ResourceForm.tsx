@@ -1,190 +1,229 @@
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Save } from "lucide-react";
-import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft } from "lucide-react";
+import { useMockStore } from "@/hooks/useMockStore";
+import { useToast } from "@/hooks/use-toast";
 
 const ResourceForm = () => {
-  const { id } = useParams();
-  const isEditing = !!id;
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const isEdit = !!id;
+  
+  const { 
+    getResourceById, 
+    categories, 
+    createResource, 
+    updateResource 
+  } = useMockStore();
 
-  // Mock data for editing
   const [formData, setFormData] = useState({
-    title: isEditing ? "Getting Started with React Hooks" : "",
-    type: isEditing ? "guide" : "",
-    category: isEditing ? "development" : "",
-    tags: isEditing ? "react, hooks, javascript, frontend" : "",
-    content: isEditing ? "<h2>Introduction to React Hooks</h2><p>React Hooks are a powerful feature...</p>" : "",
-    youtubeUrl: isEditing ? "https://www.youtube.com/watch?v=TNhaISOUy6Q" : "",
-    published: isEditing ? true : false
+    title: "",
+    type: "",
+    category: "",
+    tags: "",
+    content: "",
+    youtubeUrl: "",
+    published: false,
   });
 
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  useEffect(() => {
+    if (isEdit && id) {
+      const resource = getResourceById(id);
+      if (resource) {
+        setFormData({
+          title: resource.title,
+          type: resource.type,
+          category: resource.categoryId,
+          tags: resource.tags.join(", "),
+          content: resource.bodyHtml,
+          youtubeUrl: resource.youtubeUrl || "",
+          published: resource.published,
+        });
+      }
+    }
+  }, [id, isEdit, getResourceById]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const resourceData = {
+        title: formData.title,
+        slug: formData.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+        type: formData.type as 'guide' | 'sop' | 'tutorial',
+        categoryId: formData.category,
+        tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
+        bodyHtml: formData.content,
+        youtubeUrl: formData.youtubeUrl || undefined,
+        published: formData.published,
+        updatedAt: new Date().toISOString(),
+        author: "Admin User", // In a real app, this would come from auth
+        description: formData.content.replace(/<[^>]*>/g, '').slice(0, 160),
+      };
+
+      if (isEdit && id) {
+        updateResource(id, resourceData);
+        toast({
+          title: "Resource updated",
+          description: "The resource has been successfully updated.",
+        });
+      } else {
+        createResource(resourceData);
+        toast({
+          title: "Resource created",
+          description: "The new resource has been successfully created.",
+        });
+      }
+      
+      navigate("/admin/resources");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save the resource. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link to="/admin/resources">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Resources
-          </Button>
-        </Link>
+        <Button variant="ghost" size="sm" onClick={() => navigate("/admin/resources")}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Resources
+        </Button>
         <div>
           <h1 className="text-3xl font-bold text-text-primary">
-            {isEditing ? "Edit Resource" : "New Resource"}
+            {isEdit ? "Edit Resource" : "New Resource"}
           </h1>
           <p className="text-text-secondary">
-            {isEditing ? `Editing resource #${id}` : "Create a new knowledge base resource"}
+            {isEdit ? `Editing resource` : "Create a new knowledge base resource"}
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Form */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Basic Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title *</Label>
+              <Input
+                id="title"
+                value={formData.title}
+                onChange={(e) => setFormData({...formData, title: e.target.value})}
+                placeholder="Enter resource title"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Title *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => handleInputChange("title", e.target.value)}
-                  placeholder="Enter resource title"
-                  className="bg-surface border-card-border"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="type">Type *</Label>
-                  <Select value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
-                    <SelectTrigger className="bg-surface border-card-border">
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="guide">Guide</SelectItem>
-                      <SelectItem value="sop">SOP</SelectItem>
-                      <SelectItem value="tutorial">Tutorial</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="category">Category *</Label>
-                  <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-                    <SelectTrigger className="bg-surface border-card-border">
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="development">Development</SelectItem>
-                      <SelectItem value="devops">DevOps</SelectItem>
-                      <SelectItem value="backend">Backend</SelectItem>
-                      <SelectItem value="frontend">Frontend</SelectItem>
-                      <SelectItem value="design">Design</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Label htmlFor="type">Type *</Label>
+                <Select value={formData.type} onValueChange={(value) => setFormData({...formData, type: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="guide">Guide</SelectItem>
+                    <SelectItem value="sop">SOP</SelectItem>
+                    <SelectItem value="tutorial">Tutorial</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="tags">Tags</Label>
-                <Input
-                  id="tags"
-                  value={formData.tags}
-                  onChange={(e) => handleInputChange("tags", e.target.value)}
-                  placeholder="react, hooks, javascript (comma separated)"
-                  className="bg-surface border-card-border"
-                />
+                <Label htmlFor="category">Category *</Label>
+                <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="youtube">YouTube URL (optional)</Label>
-                <Input
-                  id="youtube"
-                  value={formData.youtubeUrl}
-                  onChange={(e) => handleInputChange("youtubeUrl", e.target.value)}
-                  placeholder="https://www.youtube.com/watch?v=..."
-                  className="bg-surface border-card-border"
-                />
+            <div className="space-y-2">
+              <Label htmlFor="tags">Tags</Label>
+              <Input
+                id="tags"
+                value={formData.tags}
+                onChange={(e) => setFormData({...formData, tags: e.target.value})}
+                placeholder="tag1, tag2, tag3 (comma separated)"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="youtube">YouTube URL (optional)</Label>
+              <Input
+                id="youtube"
+                value={formData.youtubeUrl}
+                onChange={(e) => setFormData({...formData, youtubeUrl: e.target.value})}
+                placeholder="https://www.youtube.com/watch?v=..."
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Content</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <Label htmlFor="content">Rich Content (HTML)</Label>
+              <Textarea
+                id="content"
+                value={formData.content}
+                onChange={(e) => setFormData({...formData, content: e.target.value})}
+                placeholder="Enter HTML content..."
+                className="min-h-[300px]"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Publishing</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="published">Published</Label>
+                <p className="text-sm text-text-muted">
+                  Make this resource visible to users
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <Switch
+                id="published"
+                checked={formData.published}
+                onCheckedChange={(checked) => setFormData({...formData, published: checked})}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Content</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Label htmlFor="content">Rich Content</Label>
-                <div className="min-h-[300px] border border-card-border rounded-md bg-surface p-4">
-                  <div className="text-text-muted text-sm mb-2">
-                    TODO: Replace with TipTap rich text editor
-                  </div>
-                  <Textarea
-                    id="content"
-                    value={formData.content}
-                    onChange={(e) => handleInputChange("content", e.target.value)}
-                    placeholder="Enter resource content (HTML for now, will be TipTap editor)"
-                    className="min-h-[250px] bg-transparent border-0 resize-none focus-visible:ring-0"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Publish Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="published">Published</Label>
-                  <p className="text-sm text-text-muted">
-                    Make this resource visible to users
-                  </p>
-                </div>
-                <Switch
-                  id="published"
-                  checked={formData.published}
-                  onCheckedChange={(checked) => handleInputChange("published", checked)}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="space-y-3">
-            <Button className="w-full">
-              <Save className="mr-2 h-4 w-4" />
-              Save Resource
-            </Button>
-            <Button variant="outline" className="w-full">
-              Save as Draft
-            </Button>
-          </div>
-
-          {/* TODO Block */}
-          <div className="text-xs text-text-muted p-3 bg-muted/50 rounded border border-dashed border-card-border">
-            TODO: Add auto-save, preview mode, revision history, and form validation
-          </div>
-        </div>
-      </div>
+        <Button type="submit" className="w-full">
+          {isEdit ? "Update Resource" : "Create Resource"}
+        </Button>
+      </form>
     </div>
   );
 };

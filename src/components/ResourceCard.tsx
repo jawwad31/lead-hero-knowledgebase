@@ -12,18 +12,20 @@ interface ResourceCardProps {
   author: string;
   updatedAt: string;
   tags: string[];
+  href?: string;
 }
 
-const ResourceCard = ({
-  title,
-  description,
-  category,
-  type,
-  readTime,
-  views,
-  author,
-  updatedAt,
+const ResourceCard = ({ 
+  title, 
+  description, 
+  category, 
+  type, 
+  readTime, 
+  views, 
+  author, 
+  updatedAt, 
   tags,
+  href = "#"
 }: ResourceCardProps) => {
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -39,7 +41,8 @@ const ResourceCard = ({
   };
 
   return (
-    <Card className="group cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] border-card-border bg-card">
+    <Card className="group cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] border-card-border bg-card"
+          onClick={() => window.location.href = href}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-semibold text-text-primary line-clamp-2 group-hover:text-primary transition-colors">

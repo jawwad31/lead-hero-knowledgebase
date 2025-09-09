@@ -1,21 +1,48 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Plus, GripVertical, Edit2, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Plus, GripVertical, Edit, Trash2 } from "lucide-react";
+import { useMockStore } from "@/hooks/useMockStore";
+import { useToast } from "@/hooks/use-toast";
 
 const Collections = () => {
-  // Mock data
-  const [collections, setCollections] = useState([
-    { id: 1, name: "Development", description: "Programming and development resources", resourceCount: 15, color: "#3b82f6" },
-    { id: 2, name: "DevOps", description: "Deployment and operations guides", resourceCount: 8, color: "#10b981" },
-    { id: 3, name: "Backend", description: "Server-side development", resourceCount: 12, color: "#f59e0b" },
-    { id: 4, name: "Frontend", description: "User interface and experience", resourceCount: 10, color: "#ef4444" },
-    { id: 5, name: "Design", description: "UI/UX design resources", resourceCount: 6, color: "#8b5cf6" }
-  ]);
+  const { categories, createCategory, updateCategory, deleteCategory } = useMockStore();
+  const { toast } = useToast();
+  const [newCategoryName, setNewCategoryName] = useState("");
 
-  const [newCollectionName, setNewCollectionName] = useState("");
+  const handleAddCategory = () => {
+    if (newCategoryName.trim()) {
+      try {
+        createCategory({
+          name: newCategoryName,
+          slug: newCategoryName.toLowerCase().replace(/\s+/g, '-'),
+          order: categories.length + 1
+        });
+        setNewCategoryName("");
+        toast({
+          title: "Category created",
+          description: "The new category has been successfully created.",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to create category. Please try again.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handleDeleteCategory = (id: string) => {
+    if (confirm('Are you sure you want to delete this category?')) {
+      deleteCategory(id);
+      toast({
+        title: "Category deleted",
+        description: "The category has been successfully deleted.",
+      });
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -24,20 +51,20 @@ const Collections = () => {
         <p className="text-text-secondary">Organize your resources into categories</p>
       </div>
 
-      {/* Create New Collection */}
+      {/* Create New Category */}
       <Card>
         <CardHeader>
-          <CardTitle>Create New Collection</CardTitle>
+          <CardTitle>Create New Category</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-3">
             <Input
-              value={newCollectionName}
-              onChange={(e) => setNewCollectionName(e.target.value)}
-              placeholder="Collection name"
-              className="bg-surface border-card-border"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              placeholder="Category name"
+              onKeyPress={(e) => e.key === 'Enter' && handleAddCategory()}
             />
-            <Button>
+            <Button onClick={handleAddCategory}>
               <Plus className="mr-2 h-4 w-4" />
               Create
             </Button>
@@ -45,66 +72,40 @@ const Collections = () => {
         </CardContent>
       </Card>
 
-      {/* Collections List */}
+      {/* Categories List */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            Existing Collections
-            <Badge variant="secondary" className="text-xs">
-              Drag to reorder
-            </Badge>
-          </CardTitle>
+          <CardTitle>Existing Categories</CardTitle>
+          <CardDescription>Drag to reorder categories</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {collections.map((collection, index) => (
-              <div
-                key={collection.id}
-                className="flex items-center gap-4 p-4 border border-card-border rounded-lg bg-surface/50 hover:bg-surface transition-colors"
-              >
-                {/* Drag Handle */}
-                <div className="cursor-grab active:cursor-grabbing text-text-muted hover:text-text-primary">
-                  <GripVertical className="h-5 w-5" />
-                </div>
-
-                {/* Color Indicator */}
-                <div 
-                  className="w-4 h-4 rounded-full border border-card-border"
-                  style={{ backgroundColor: collection.color }}
-                />
-
-                {/* Collection Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-1">
-                    <h3 className="font-semibold text-text-primary">{collection.name}</h3>
-                    <Badge variant="outline" className="text-xs">
-                      {collection.resourceCount} resources
-                    </Badge>
+            {categories
+              .sort((a, b) => a.order - b.order)
+              .map((category) => (
+                <div key={category.id} className="flex items-center gap-4 p-3 border rounded-lg bg-card">
+                  <GripVertical className="h-5 w-5 text-text-muted cursor-grab" />
+                  <div className="flex-1">
+                    <div className="font-medium">{category.name}</div>
+                    <div className="text-sm text-text-muted">/{category.slug}</div>
                   </div>
-                  <p className="text-sm text-text-secondary truncate">
-                    {collection.description}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleDeleteCategory(category.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
-
-                {/* Actions */}
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm">
-                    <Edit2 className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </CardContent>
       </Card>
-
-      {/* TODO Block */}
-      <div className="text-sm text-text-muted p-4 bg-muted/50 rounded border border-dashed border-card-border">
-        TODO: Implement drag-and-drop reordering, collection editing modal, bulk resource assignment, and database integration
-      </div>
     </div>
   );
 };
