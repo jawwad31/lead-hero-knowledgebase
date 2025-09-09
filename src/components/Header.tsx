@@ -3,7 +3,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 
 const Header = () => {
   return (
-    <header className="sticky top-0 z-50 w-full bg-background">
+    <header className="sticky top-0 z-50 w-full">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
