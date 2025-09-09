@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import StatsBar from "@/components/StatsBar";
 import CategoryGrid from "@/components/CategoryGrid";
 import ResourceCard from "@/components/ResourceCard";
 import { ArrowLeft } from "lucide-react";
@@ -138,7 +137,6 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <Hero />
-      <StatsBar />
       
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Categories Section */}
