@@ -15,7 +15,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         
         <div className="flex-1 flex flex-col">
           {/* Admin Header */}
-          <header className="h-14 flex items-center justify-between border-b border-border/20 bg-background/60 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 px-4">
+          <header className="h-14 flex items-center justify-between border-b border-border/20 px-4">
             <SidebarTrigger className="mr-4" />
             <ThemeToggle />
           </header>
