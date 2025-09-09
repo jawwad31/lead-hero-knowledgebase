@@ -19,14 +19,14 @@ import TableOfContents from "@/components/TableOfContents";
 import ShareButton from "@/components/ShareButton";
 
 const Resource = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { getResourceBySlug, getCategoryById, incrementViewCount, getViewCount } = useMockStore();
   const [resource, setResource] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!id) {
+    if (!slug) {
       setIsLoading(false);
       return;
     }
@@ -34,7 +34,7 @@ const Resource = () => {
     // Simulate loading delay
     const timer = setTimeout(() => {
       // Find resource by slug
-      const foundResource = getResourceBySlug(id);
+      const foundResource = getResourceBySlug(slug);
       if (foundResource) {
         setResource(foundResource);
         // Increment view count when resource is viewed
@@ -44,7 +44,7 @@ const Resource = () => {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [id, getResourceBySlug, incrementViewCount]);
+  }, [slug, getResourceBySlug, incrementViewCount]);
 
   // Extract text content from HTML for SEO description
   const getTextContent = (html: string) => {

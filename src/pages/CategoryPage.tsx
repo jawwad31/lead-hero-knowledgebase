@@ -130,7 +130,7 @@ const CategoryPage = () => {
 
   // Redirect to 404 if category not found
   if (!category) {
-    navigate('/404', { replace: true });
+    navigate('/non-existent-category', { replace: true });
     return null;
   }
 
@@ -287,7 +287,7 @@ const CategoryPage = () => {
                 type={resource.type}
                 updatedAt={formatDate(resource.updatedAt)}
                 tags={resource.tags}
-                href={`/resources/${resource.id}`}
+                href={`/resources/${resource.slug}`}
               />
             ))}
           </div>
