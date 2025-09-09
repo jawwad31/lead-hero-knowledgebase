@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, Eye } from "lucide-react";
+import { ArrowLeft, Calendar, Eye, Search, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useMockStore } from "@/hooks/useMockStore";
 import { 
   Breadcrumb, 
@@ -18,6 +19,7 @@ import ShareButton from "@/components/ShareButton";
 
 const Resource = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { getResourceBySlug, getCategoryById, incrementViewCount, getViewCount } = useMockStore();
   const [resource, setResource] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -80,17 +82,75 @@ const Resource = () => {
   }
 
   if (!resource) {
+    // Check if user came from a category page
+    const referrer = document.referrer;
+    const cameFromCategory = referrer.includes('/categories/');
+    let referrerCategorySlug = null;
+    
+    if (cameFromCategory) {
+      const match = referrer.match(/\/categories\/([^/?]+)/);
+      referrerCategorySlug = match ? match[1] : null;
+    }
+
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">Resource not found</h1>
-          <p className="text-muted-foreground mb-4">The resource you're looking for doesn't exist.</p>
-          <Link to="/">
-            <Button variant="outline">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Knowledge Base
-            </Button>
-          </Link>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-2xl mx-auto text-center">
+            {/* Breadcrumb-style navigation */}
+            <Breadcrumb className="mb-8 justify-center">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link to="/">Home</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Resource Not Found</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+
+            {/* Error messaging */}
+            <h1 className="text-3xl font-bold text-foreground mb-4">
+              Resource Not Found
+            </h1>
+            <p className="text-muted-foreground mb-8">
+              The resource you're looking for doesn't exist or may have been moved.
+            </p>
+
+            {/* Search input */}
+            <div className="relative mb-8">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search for resources..."
+                className="pl-10"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    navigate(`/?search=${e.currentTarget.value}`);
+                  }
+                }}
+              />
+            </div>
+
+            {/* Navigation actions */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              {referrerCategorySlug && (
+                <Link to={`/categories/${referrerCategorySlug}`}>
+                  <Button variant="default">
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back to Category
+                  </Button>
+                </Link>
+              )}
+              <Link to="/">
+                <Button variant="outline">
+                  <Home className="h-4 w-4 mr-2" />
+                  Browse All Categories
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     );
