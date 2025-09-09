@@ -249,20 +249,9 @@ const Resource = () => {
                 </Badge>
 
                 {/* Title */}
-                <div className="flex items-start gap-3 mb-4">
-                  <h1 className="text-3xl md:text-4xl font-bold text-foreground flex-1">
-                    {resource.title}
-                  </h1>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCopyLink}
-                    className="mt-1 flex-shrink-0"
-                  >
-                    <Copy className="h-4 w-4 mr-2" />
-                    Copy link
-                  </Button>
-                </div>
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                  {resource.title}
+                </h1>
 
                 {/* Meta Information */}
                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
