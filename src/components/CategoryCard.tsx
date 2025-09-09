@@ -22,27 +22,27 @@ const CategoryCard = ({
 }: CategoryCardProps) => {
   return (
     <Card 
-      className="group cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] border-border bg-card"
+      className="group cursor-pointer transition-all duration-300 hover:elevation-8 elevation-2 border-border bg-card"
       onClick={onClick}
     >
-      <CardContent className="p-6">
+      <CardContent className="spacing-lg">
         <div className="flex items-start gap-4">
           {/* Icon */}
-          <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-primary/20">
+          <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-primary/20">
             <Icon className="h-6 w-6 text-primary" />
           </div>
           
           {/* Content */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg text-foreground mb-1 group-hover:text-primary transition-colors">
+            <h3 className="text-h3 text-foreground mb-2 group-hover:text-primary transition-colors">
               {name}
             </h3>
-            <p className="text-sm text-muted-foreground mb-2">
+            <p className="text-caption text-muted-foreground mb-3">
               {description}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <div className="inline-flex items-center px-2 py-1 rounded-full bg-accent text-accent-foreground text-overline">
               {count} resource{count !== 1 ? 's' : ''}
-            </p>
+            </div>
           </div>
         </div>
       </CardContent>

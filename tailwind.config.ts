@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        poppins: ['Poppins', 'system-ui', 'sans-serif'],
+        roboto: ['Roboto', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

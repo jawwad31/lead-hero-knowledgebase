@@ -30,58 +30,58 @@ const ResourceCard = ({
   const getTypeColor = (type: string) => {
     switch (type) {
       case "guide":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+        return "bg-primary text-primary-foreground";
       case "sop":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+        return "bg-secondary text-secondary-foreground";
       case "tutorial":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
+        return "bg-accent text-accent-foreground";
       default:
-        return "bg-secondary";
+        return "bg-muted text-muted-foreground";
     }
   };
 
   return (
-    <Card className="group cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] border-card-border bg-card"
+    <Card className="group cursor-pointer transition-all duration-300 hover:elevation-8 elevation-2 border-border bg-card"
           onClick={() => window.location.href = href}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-text-primary line-clamp-2 group-hover:text-primary transition-colors">
+          <h3 className="text-h3 text-foreground line-clamp-2 group-hover:text-primary transition-colors">
             {title}
           </h3>
-          <Badge variant="secondary" className={getTypeColor(type)}>
+          <Badge variant="secondary" className={`${getTypeColor(type)} text-overline`}>
             {type.toUpperCase()}
           </Badge>
         </div>
-        <p className="text-sm text-text-secondary line-clamp-2">{description}</p>
+        <p className="text-body text-muted-foreground line-clamp-2">{description}</p>
       </CardHeader>
       
       <CardContent className="pt-0">
-        <div className="flex flex-wrap gap-1 mb-3">
+        <div className="flex flex-wrap gap-2 mb-4">
           {tags.map((tag) => (
-            <Badge key={tag} variant="outline" className="text-xs">
+            <Badge key={tag} variant="outline" className="text-caption rounded-full">
               {tag}
             </Badge>
           ))}
         </div>
         
-        <div className="flex items-center justify-between text-xs text-text-muted">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between text-caption text-muted-foreground">
+          <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
+              <Clock className="h-4 w-4" />
               <span>{readTime}</span>
             </div>
             <div className="flex items-center gap-1">
-              <Eye className="h-3 w-3" />
+              <Eye className="h-4 w-4" />
               <span>{views}</span>
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <User className="h-3 w-3" />
+            <User className="h-4 w-4" />
             <span>{author}</span>
           </div>
         </div>
         
-        <div className="mt-2 text-xs text-text-muted">
+        <div className="mt-3 text-caption text-muted-foreground">
           Updated {updatedAt}
         </div>
       </CardContent>
