@@ -20,6 +20,7 @@ export interface MockResource {
   updatedAt: string;
   author?: string;
   description?: string;
+  ogImage?: string;
 }
 
 // Initial mock categories
@@ -54,6 +55,7 @@ const initialResources: MockResource[] = [
     updatedAt: '2024-01-07T00:00:00Z',
     author: 'Sarah Chen',
     description: 'Complete guide to setting up your Lead Hero account and understanding the core features.',
+    ogImage: '/og-getting-started.png',
   },
   {
     id: '2',

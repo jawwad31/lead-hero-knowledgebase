@@ -7,6 +7,10 @@ import { Input } from "@/components/ui/input";
 import { sanitizeHtml, addHeadingIds } from "@/utils/sanitizeHtml";
 import { useMockStore } from "@/hooks/useMockStore";
 import { useToast } from "@/hooks/use-toast";
+import { MetaTags } from "@/components/SEO/MetaTags";
+import { ArticleStructuredData } from "@/components/SEO/StructuredData";
+import { getMetaForResource, extractTextFromHtml } from "@/utils/seo";
+import { siteSettings } from "@/config/siteSettings";
 import { 
   Breadcrumb, 
   BreadcrumbList, 
@@ -48,50 +52,6 @@ const Resource = () => {
     return () => clearTimeout(timer);
   }, [slug, getResourceBySlug, incrementViewCount]);
 
-  // Extract text content from HTML for SEO description
-  const getTextContent = (html: string) => {
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    return div.textContent || div.innerText || '';
-  };
-
-  // Set SEO meta tags and OpenGraph
-  useEffect(() => {
-    if (resource) {
-      const title = `${resource.title} · Lead Hero KB`;
-      const textContent = getTextContent(resource.bodyHtml);
-      const description = textContent.slice(0, 160);
-      const url = window.location.href;
-      
-      // Set page title
-      document.title = title;
-      
-      // Set or update meta description
-      let metaDescription = document.querySelector('meta[name="description"]');
-      if (!metaDescription) {
-        metaDescription = document.createElement('meta');
-        metaDescription.setAttribute('name', 'description');
-        document.head.appendChild(metaDescription);
-      }
-      metaDescription.setAttribute('content', description);
-      
-      // OpenGraph tags
-      const setOrUpdateMeta = (property: string, content: string) => {
-        let meta = document.querySelector(`meta[property="${property}"]`);
-        if (!meta) {
-          meta = document.createElement('meta');
-          meta.setAttribute('property', property);
-          document.head.appendChild(meta);
-        }
-        meta.setAttribute('content', content);
-      };
-      
-      setOrUpdateMeta('og:title', title);
-      setOrUpdateMeta('og:description', description);
-      setOrUpdateMeta('og:type', 'article');
-      setOrUpdateMeta('og:url', url);
-    }
-  }, [resource]);
 
   // Truncate text for breadcrumbs
   const truncateText = (text: string, maxLength: number = 30) => {
@@ -182,6 +142,15 @@ const Resource = () => {
   const viewCount = getViewCount(resource.id);
   const showTOC = resource.bodyHtml.includes('<h2>') || resource.bodyHtml.includes('<h3>');
   
+  // Generate SEO data
+  const bodyText = extractTextFromHtml(resource.bodyHtml);
+  const resourceMeta = getMetaForResource({
+    title: resource.title,
+    body_text: bodyText,
+    slug: resource.slug,
+    ogImage: resource.ogImage
+  });
+  
   // Copy link functionality
   const handleCopyLink = async () => {
     try {
@@ -207,6 +176,20 @@ const Resource = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <MetaTags
+        title={resourceMeta.title}
+        description={resourceMeta.desc}
+        url={resourceMeta.url}
+        image={resourceMeta.image}
+        type="article"
+        twitterSite={siteSettings.twitterHandle}
+      />
+      <ArticleStructuredData
+        headline={resource.title}
+        dateModified={resource.updatedAt}
+        image={resourceMeta.image}
+        url={resourceMeta.url}
+      />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-7xl mx-auto">
           {/* Breadcrumbs */}

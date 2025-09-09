@@ -20,6 +20,10 @@ import {
 } from "@/components/ui/breadcrumb";
 import { useDebounce } from "@/hooks/useDebounce";
 import { highlightText } from "@/utils/highlightText";
+import { MetaTags } from "@/components/SEO/MetaTags";
+import { CollectionPageStructuredData } from "@/components/SEO/StructuredData";
+import { getMetaForCategory } from "@/utils/seo";
+import { siteSettings } from "@/config/siteSettings";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -115,41 +119,6 @@ const CategoryPage = () => {
     setCurrentPage(1);
   }, [debouncedSearchQuery, typeFilter, sortBy]);
 
-  // Set page title and meta description
-  useEffect(() => {
-    if (category) {
-      const title = `${category.name} · Lead Hero KB`;
-      const description = `Resources in ${category.name} for Lead Hero CRM.`;
-      const url = window.location.href;
-      
-      document.title = title;
-      
-      // Set or update meta description
-      let metaDescription = document.querySelector('meta[name="description"]');
-      if (!metaDescription) {
-        metaDescription = document.createElement('meta');
-        metaDescription.setAttribute('name', 'description');
-        document.head.appendChild(metaDescription);
-      }
-      metaDescription.setAttribute('content', description);
-      
-      // OpenGraph tags
-      const setOrUpdateMeta = (property: string, content: string) => {
-        let meta = document.querySelector(`meta[property="${property}"]`);
-        if (!meta) {
-          meta = document.createElement('meta');
-          meta.setAttribute('property', property);
-          document.head.appendChild(meta);
-        }
-        meta.setAttribute('content', content);
-      };
-      
-      setOrUpdateMeta('og:title', title);
-      setOrUpdateMeta('og:description', description);
-      setOrUpdateMeta('og:type', 'website');
-      setOrUpdateMeta('og:url', url);
-    }
-  }, [category]);
 
   // Redirect to 404 if category not found
   if (!category) {
@@ -170,6 +139,13 @@ const CategoryPage = () => {
       day: 'numeric',
     });
   };
+
+  // Generate SEO data for category
+  const categoryMeta = category ? getMetaForCategory({
+    name: category.name,
+    slug: category.slug,
+    description: `Resources in ${category.name} for Lead Hero CRM`
+  }) : null;
 
   if (isLoading) {
     return (
@@ -212,6 +188,22 @@ const CategoryPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {categoryMeta && (
+        <>
+          <MetaTags
+            title={categoryMeta.title}
+            description={categoryMeta.desc}
+            url={categoryMeta.url}
+            image={categoryMeta.image}
+            type="website"
+            twitterSite={siteSettings.twitterHandle}
+          />
+          <CollectionPageStructuredData
+            name={category.name}
+            url={categoryMeta.url}
+          />
+        </>
+      )}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-7xl">
         {/* Breadcrumb */}
         <Breadcrumb className="mb-8">

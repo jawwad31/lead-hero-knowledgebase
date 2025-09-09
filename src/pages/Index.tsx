@@ -1,9 +1,22 @@
 import Hero from "@/components/Hero";
 import CategoryGrid from "@/components/CategoryGrid";
+import { MetaTags } from "@/components/SEO/MetaTags";
+import { getMetaForHome } from "@/utils/seo";
+import { siteSettings } from "@/config/siteSettings";
 
 const Index = () => {
+  const homeMeta = getMetaForHome();
+
   return (
     <>
+      <MetaTags
+        title={homeMeta.title}
+        description={homeMeta.desc}
+        url={homeMeta.url}
+        image={homeMeta.image}
+        type="website"
+        twitterSite={siteSettings.twitterHandle}
+      />
       <Hero />
       
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">

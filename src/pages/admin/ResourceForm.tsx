@@ -33,6 +33,7 @@ const ResourceForm = () => {
     tags: "",
     content: "",
     youtubeUrl: "",
+    ogImage: "",
     published: false,
   });
 
@@ -50,6 +51,7 @@ const ResourceForm = () => {
           tags: resource.tags.join(", "),
           content: resource.bodyHtml,
           youtubeUrl: resource.youtubeUrl || "",
+          ogImage: resource.ogImage || "",
           published: resource.published,
         });
       }
@@ -111,6 +113,14 @@ const ResourceForm = () => {
       newErrors.youtubeUrl = "Please enter a valid YouTube, Loom, or Vimeo URL";
     }
 
+    // OG Image URL validation
+    if (formData.ogImage && formData.ogImage.trim()) {
+      const urlRegex = /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i;
+      if (!urlRegex.test(formData.ogImage.trim())) {
+        newErrors.ogImage = "Please enter a valid image URL (jpg, jpeg, png, webp, gif)";
+      }
+    }
+
     // Content validation (1-80k chars)
     if (!formData.content.trim() || formData.content.length < 1) {
       newErrors.content = "Content is required";
@@ -167,6 +177,14 @@ const ResourceForm = () => {
       newErrors.youtubeUrl = "Please enter a valid YouTube, Loom, or Vimeo URL";
     }
 
+    // OG Image URL validation
+    if (formData.ogImage && formData.ogImage.trim()) {
+      const urlRegex = /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i;
+      if (!urlRegex.test(formData.ogImage.trim())) {
+        newErrors.ogImage = "Please enter a valid image URL (jpg, jpeg, png, webp, gif)";
+      }
+    }
+
     // Content validation (1-80k chars)
     if (!formData.content.trim() || formData.content.length < 1) {
       newErrors.content = "Content is required";
@@ -201,6 +219,7 @@ const ResourceForm = () => {
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
         bodyHtml: sanitizedContent,
         youtubeUrl: formData.youtubeUrl.trim() || undefined,
+        ogImage: formData.ogImage.trim() || undefined,
         published: formData.published,
         updatedAt: new Date().toISOString(),
         author: "Admin User",
@@ -373,6 +392,26 @@ const ResourceForm = () => {
                 <div className="flex items-center gap-1 text-sm text-destructive">
                   <AlertCircle className="h-4 w-4" />
                   {errors.youtubeUrl}
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="ogImage">OG Image URL (optional)</Label>
+              <Input
+                id="ogImage"
+                value={formData.ogImage}
+                onChange={(e) => setFormData({...formData, ogImage: e.target.value})}
+                placeholder="https://example.com/image.jpg"
+                className={errors.ogImage ? "border-destructive" : ""}
+              />
+              <p className="text-xs text-muted-foreground">
+                Custom Open Graph image for social sharing (jpg, jpeg, png, webp, gif)
+              </p>
+              {errors.ogImage && (
+                <div className="flex items-center gap-1 text-sm text-destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  {errors.ogImage}
                 </div>
               )}
             </div>
