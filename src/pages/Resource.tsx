@@ -4,22 +4,43 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMockStore } from "@/hooks/useMockStore";
+import { 
+  Breadcrumb, 
+  BreadcrumbList, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbSeparator, 
+  BreadcrumbPage 
+} from "@/components/ui/breadcrumb";
+import ArticleSkeleton from "@/components/ArticleSkeleton";
+import TableOfContents from "@/components/TableOfContents";
+import ShareButton from "@/components/ShareButton";
 
 const Resource = () => {
   const { id } = useParams<{ id: string }>();
   const { getResourceBySlug, getCategoryById, incrementViewCount, getViewCount } = useMockStore();
   const [resource, setResource] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!id) return;
-    
-    // Find resource by slug
-    const foundResource = getResourceBySlug(id);
-    if (foundResource) {
-      setResource(foundResource);
-      // Increment view count when resource is viewed
-      incrementViewCount(foundResource.id);
+    if (!id) {
+      setIsLoading(false);
+      return;
     }
+    
+    // Simulate loading delay
+    const timer = setTimeout(() => {
+      // Find resource by slug
+      const foundResource = getResourceBySlug(id);
+      if (foundResource) {
+        setResource(foundResource);
+        // Increment view count when resource is viewed
+        incrementViewCount(foundResource.id);
+      }
+      setIsLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [id, getResourceBySlug, incrementViewCount]);
 
   // Extract text content from HTML for SEO description
@@ -48,12 +69,22 @@ const Resource = () => {
     }
   }, [resource]);
 
+  // Truncate text for breadcrumbs
+  const truncateText = (text: string, maxLength: number = 30) => {
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength) + '...';
+  };
+
+  if (isLoading) {
+    return <ArticleSkeleton />;
+  }
+
   if (!resource) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-text-primary mb-4">Resource not found</h1>
-          <p className="text-text-secondary mb-4">The resource you're looking for doesn't exist.</p>
+          <h1 className="text-2xl font-bold text-foreground mb-4">Resource not found</h1>
+          <p className="text-muted-foreground mb-4">The resource you're looking for doesn't exist.</p>
           <Link to="/">
             <Button variant="outline">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -67,67 +98,102 @@ const Resource = () => {
 
   const category = getCategoryById(resource.categoryId);
   const viewCount = getViewCount(resource.id);
+  const showTOC = resource.bodyHtml.includes('<h2>') || resource.bodyHtml.includes('<h3>');
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="max-w-4xl mx-auto">
-          {/* Back Button */}
-          <Link to="/">
-            <Button variant="outline" className="mb-8">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Knowledge Base
-            </Button>
-          </Link>
+        <div className="max-w-7xl mx-auto">
+          {/* Breadcrumbs */}
+          <Breadcrumb className="mb-8">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to="/">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to={`/categories/${category?.slug}`}>Categories</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to={`/categories/${category?.slug}`}>
+                    {truncateText(category?.name || 'Unknown Category')}
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{truncateText(resource.title)}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
 
-          {/* Resource Header */}
-          <header className="mb-8">
-            {/* Category Badge */}
-            <Badge variant="secondary" className="mb-4">
-              {category?.name || 'Unknown Category'}
-            </Badge>
+          <div className="flex gap-8">
+            {/* Main Content */}
+            <div className="flex-1 max-w-4xl">
+              {/* Resource Header */}
+              <header className="mb-8">
+                {/* Category Badge */}
+                <Badge variant="secondary" className="mb-4">
+                  {category?.name || 'Unknown Category'}
+                </Badge>
 
-            {/* Title */}
-            <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
-              {resource.title}
-            </h1>
+                {/* Title */}
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                  {resource.title}
+                </h1>
 
-            {/* Meta Information */}
-            <div className="flex flex-wrap items-center gap-4 text-sm text-text-secondary mb-8">
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                <span>Updated {new Date(resource.updatedAt).toLocaleDateString()}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Eye className="h-4 w-4" />
-                <span>{viewCount} views</span>
-              </div>
-              {resource.author && (
-                <div>
-                  <span>By {resource.author}</span>
+                {/* Meta Information */}
+                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    <span>Updated {new Date(resource.updatedAt).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Eye className="h-4 w-4" />
+                    <span>{viewCount} views</span>
+                  </div>
+                  {resource.author && (
+                    <div>
+                      <span>By {resource.author}</span>
+                    </div>
+                  )}
+                  <ShareButton title={resource.title} />
                 </div>
-              )}
+
+                {/* Tags */}
+                {resource.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-8">
+                    {resource.tags.map((tag: string) => (
+                      <Badge key={tag} variant="outline" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </header>
+
+              {/* Resource Content */}
+              <article className="prose prose-lg max-w-none">
+                <div 
+                  className="resource-content"
+                  dangerouslySetInnerHTML={{ __html: resource.bodyHtml }}
+                />
+              </article>
             </div>
 
-            {/* Tags */}
-            {resource.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-8">
-                {resource.tags.map((tag: string) => (
-                  <Badge key={tag} variant="outline" className="text-xs">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
+            {/* Table of Contents Sidebar */}
+            {showTOC && (
+              <aside className="hidden xl:block w-64 flex-shrink-0">
+                <TableOfContents content={resource.bodyHtml} />
+              </aside>
             )}
-          </header>
-
-          {/* Resource Content */}
-          <article className="prose prose-lg max-w-none">
-            <div 
-              className="resource-content"
-              dangerouslySetInnerHTML={{ __html: resource.bodyHtml }}
-            />
-          </article>
+          </div>
         </div>
       </div>
     </div>

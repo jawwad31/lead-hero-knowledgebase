@@ -1,18 +1,19 @@
+import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 interface ResourceCardProps {
-  title: string;
+  title: string | React.ReactNode;
   type: "guide" | "sop" | "tutorial";
   updatedAt: string;
   tags: string[];
   href: string;
 }
 
-const ResourceCard = ({ 
-  title, 
-  type, 
-  updatedAt, 
+const ResourceCard = ({
+  title,
+  type,
+  updatedAt,
   tags,
   href
 }: ResourceCardProps) => {
