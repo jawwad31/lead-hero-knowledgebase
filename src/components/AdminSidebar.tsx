@@ -69,9 +69,6 @@ export function AdminSidebar() {
 
         {/* Navigation */}
         <SidebarGroup className="px-2 py-3">
-          <SidebarGroupLabel className="px-3 mb-1 text-xs font-medium text-muted-foreground/70 tracking-wide lowercase">
-            {!isCollapsed && "navigation"}
-          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
               {adminItems.map((item) => (
@@ -93,9 +90,6 @@ export function AdminSidebar() {
 
         {/* Quick Actions */}
         <SidebarGroup className="px-2 py-3">
-          <SidebarGroupLabel className="px-3 mb-1 text-xs font-medium text-muted-foreground/70 tracking-wide lowercase">
-            {!isCollapsed && "actions"}
-          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
               <SidebarMenuItem>
