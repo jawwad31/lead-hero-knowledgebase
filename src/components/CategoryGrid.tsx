@@ -1,0 +1,121 @@
+import { 
+  Rocket, 
+  Flame, 
+  Link2, 
+  Bot, 
+  Workflow, 
+  Target, 
+  User, 
+  Lightbulb, 
+  BookOpen, 
+  Code 
+} from "lucide-react";
+import CategoryCard from "./CategoryCard";
+
+// Demo categories - these will be customized later
+const categories = [
+  {
+    id: "quick-start",
+    title: "Quick Start",
+    author: "Lead Hero Team",
+    articleCount: 6,
+    icon: Rocket,
+    color: "#3B82F6", // Blue
+  },
+  {
+    id: "troubleshooting", 
+    title: "Troubleshooting",
+    author: "Lead Hero Team",
+    articleCount: 4,
+    icon: Flame,
+    color: "#EC4899", // Pink
+  },
+  {
+    id: "sources",
+    title: "Sources",
+    author: "Lead Hero Team", 
+    articleCount: 5,
+    icon: Link2,
+    color: "#1E40AF", // Dark Blue
+  },
+  {
+    id: "ai-providers",
+    title: "AI Providers", 
+    author: "Lead Hero Team",
+    articleCount: 6,
+    icon: Bot,
+    color: "#06B6D4", // Cyan
+  },
+  {
+    id: "job-flows",
+    title: "Job Flows",
+    author: "Lead Hero Team",
+    articleCount: 21,
+    icon: Workflow,
+    color: "#10B981", // Green
+  },
+  {
+    id: "personas",
+    title: "Personas",
+    author: "Lead Hero Team", 
+    articleCount: 3,
+    icon: Target,
+    color: "#DC2626", // Red
+  },
+  {
+    id: "account",
+    title: "Account",
+    author: "Lead Hero Team",
+    articleCount: 11,
+    icon: User,
+    color: "#7C3AED", // Purple
+  },
+  {
+    id: "custom-ideas",
+    title: "Custom Ideas",
+    author: "Lead Hero Team",
+    articleCount: 5,
+    icon: Lightbulb,
+    color: "#F59E0B", // Orange
+  },
+  {
+    id: "knowledge-library", 
+    title: "Knowledge Library",
+    author: "Lead Hero Team",
+    articleCount: 2,
+    icon: BookOpen,
+    color: "#374151", // Gray
+  },
+  {
+    id: "developer",
+    title: "Developer",
+    author: "Lead Hero Team",
+    articleCount: 1,
+    icon: Code,
+    color: "#6366F1", // Indigo
+  },
+];
+
+interface CategoryGridProps {
+  onCategorySelect: (categoryId: string) => void;
+}
+
+const CategoryGrid = ({ onCategorySelect }: CategoryGridProps) => {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {categories.map((category) => (
+        <CategoryCard
+          key={category.id}
+          title={category.title}
+          author={category.author}
+          articleCount={category.articleCount}
+          icon={category.icon}
+          color={category.color}
+          onClick={() => onCategorySelect(category.id)}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default CategoryGrid;

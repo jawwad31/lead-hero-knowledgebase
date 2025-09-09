@@ -2,8 +2,10 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import StatsBar from "@/components/StatsBar";
-import CategoryFilter from "@/components/CategoryFilter";
+import CategoryGrid from "@/components/CategoryGrid";
 import ResourceCard from "@/components/ResourceCard";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Demo data
 const demoResources = [
@@ -76,12 +78,62 @@ const demoResources = [
 ];
 
 const Index = () => {
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const filteredResources = selectedCategory === "all" 
-    ? demoResources 
-    : demoResources.filter(resource => resource.category === selectedCategory);
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+  };
 
+  const handleBackToCategories = () => {
+    setSelectedCategory(null);
+  };
+
+  // Show category resources when a category is selected
+  if (selectedCategory) {
+    const filteredResources = demoResources.filter(resource => 
+      resource.category === selectedCategory.replace("-", "")
+    );
+
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        
+        <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Back Button */}
+          <div className="mb-8">
+            <Button 
+              variant="outline" 
+              onClick={handleBackToCategories}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Categories
+            </Button>
+            <h2 className="text-2xl font-bold text-text-primary capitalize">
+              {selectedCategory.replace("-", " ")} Resources
+            </h2>
+          </div>
+
+          {/* Resources Grid */}
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredResources.map((resource, index) => (
+              <ResourceCard key={index} {...resource} />
+            ))}
+          </div>
+
+          {/* Empty State */}
+          {filteredResources.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-text-secondary mb-2">No resources found in this category yet.</p>
+              <p className="text-sm text-text-muted">Check back soon for new content!</p>
+            </div>
+          )}
+        </main>
+      </div>
+    );
+  }
+
+  // Show category grid by default
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -89,28 +141,24 @@ const Index = () => {
       <StatsBar />
       
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Filter Section */}
+        {/* Categories Section */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-text-primary mb-2">Browse by Category</h2>
+          <p className="text-text-secondary mb-8">
+            Choose a category to explore related guides, SOPs, and tutorials.
+          </p>
+          <CategoryGrid onCategorySelect={handleCategorySelect} />
+        </div>
+
+        {/* Recent Resources */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-text-primary mb-4">Browse Resources</h2>
-          <CategoryFilter 
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-          />
-        </div>
-
-        {/* Resources Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredResources.map((resource, index) => (
-            <ResourceCard key={index} {...resource} />
-          ))}
-        </div>
-
-        {/* Empty State */}
-        {filteredResources.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-text-secondary">No resources found in this category.</p>
+          <h3 className="text-xl font-semibold text-text-primary mb-6">Recently Updated</h3>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {demoResources.slice(0, 3).map((resource, index) => (
+              <ResourceCard key={index} {...resource} />
+            ))}
           </div>
-        )}
+        </div>
       </main>
     </div>
   );
