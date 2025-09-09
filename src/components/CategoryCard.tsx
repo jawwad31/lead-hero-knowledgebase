@@ -6,7 +6,6 @@ interface CategoryCardProps {
   author: string;
   articleCount: number;
   icon: LucideIcon;
-  color: string;
   onClick: () => void;
 }
 
@@ -15,7 +14,6 @@ const CategoryCard = ({
   author, 
   articleCount, 
   icon: Icon, 
-  color,
   onClick 
 }: CategoryCardProps) => {
   return (
@@ -26,11 +24,8 @@ const CategoryCard = ({
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
           {/* Icon */}
-          <div 
-            className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
-            style={{ backgroundColor: color }}
-          >
-            <Icon className="h-6 w-6 text-white" />
+          <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-primary/20">
+            <Icon className="h-6 w-6 text-primary" />
           </div>
           
           {/* Content */}

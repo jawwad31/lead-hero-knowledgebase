@@ -20,7 +20,6 @@ const categories = [
     author: "Lead Hero Team",
     articleCount: 6,
     icon: Rocket,
-    color: "#3B82F6", // Blue
   },
   {
     id: "troubleshooting", 
@@ -28,7 +27,6 @@ const categories = [
     author: "Lead Hero Team",
     articleCount: 4,
     icon: Flame,
-    color: "#EC4899", // Pink
   },
   {
     id: "sources",
@@ -36,7 +34,6 @@ const categories = [
     author: "Lead Hero Team", 
     articleCount: 5,
     icon: Link2,
-    color: "#1E40AF", // Dark Blue
   },
   {
     id: "ai-providers",
@@ -44,7 +41,6 @@ const categories = [
     author: "Lead Hero Team",
     articleCount: 6,
     icon: Bot,
-    color: "#06B6D4", // Cyan
   },
   {
     id: "job-flows",
@@ -52,7 +48,6 @@ const categories = [
     author: "Lead Hero Team",
     articleCount: 21,
     icon: Workflow,
-    color: "#10B981", // Green
   },
   {
     id: "personas",
@@ -60,7 +55,6 @@ const categories = [
     author: "Lead Hero Team", 
     articleCount: 3,
     icon: Target,
-    color: "#DC2626", // Red
   },
   {
     id: "account",
@@ -68,7 +62,6 @@ const categories = [
     author: "Lead Hero Team",
     articleCount: 11,
     icon: User,
-    color: "#7C3AED", // Purple
   },
   {
     id: "custom-ideas",
@@ -76,7 +69,6 @@ const categories = [
     author: "Lead Hero Team",
     articleCount: 5,
     icon: Lightbulb,
-    color: "#F59E0B", // Orange
   },
   {
     id: "knowledge-library", 
@@ -84,7 +76,6 @@ const categories = [
     author: "Lead Hero Team",
     articleCount: 2,
     icon: BookOpen,
-    color: "#374151", // Gray
   },
   {
     id: "developer",
@@ -92,7 +83,6 @@ const categories = [
     author: "Lead Hero Team",
     articleCount: 1,
     icon: Code,
-    color: "#6366F1", // Indigo
   },
 ];
 
@@ -110,7 +100,6 @@ const CategoryGrid = ({ onCategorySelect }: CategoryGridProps) => {
           author={category.author}
           articleCount={category.articleCount}
           icon={category.icon}
-          color={category.color}
           onClick={() => onCategorySelect(category.id)}
         />
       ))}
