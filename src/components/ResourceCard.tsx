@@ -19,13 +19,13 @@ const ResourceCard = ({
   const getTypeColor = (type: string) => {
     switch (type) {
       case "guide":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+        return "bg-accent-light text-accent-foreground border border-accent/20";
       case "sop":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+        return "bg-success/10 text-success border border-success/20";
       case "tutorial":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
+        return "bg-secondary text-secondary-foreground border border-card-border";
       default:
-        return "bg-secondary";
+        return "bg-secondary text-secondary-foreground";
     }
   };
 

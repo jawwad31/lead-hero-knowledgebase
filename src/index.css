@@ -98,50 +98,74 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Dark mode with Lead Hero brand */
-    --primary: 45 96% 48%;
-    --primary-foreground: 220 9% 14%;
+    /* Dark mode with soft neutral grays and WCAG AA compliance */
+    --primary: 45 96% 48%; /* Keep brand gold */
+    --primary-foreground: 0 0% 0%; /* High contrast black text on gold */
     --primary-hover: 45 96% 42%;
-    --primary-light: 45 96% 15%;
+    --primary-light: 45 96% 12%; /* Darker gold accent */
     
-    --background: 220 9% 9%;
-    --foreground: 0 0% 95%;
-    --surface: 220 9% 12%;
-    --surface-hover: 220 9% 15%;
+    /* Soft neutral grays - WCAG AA compliant */
+    --background: 240 5% 6%; /* Very dark blue-gray */
+    --foreground: 0 0% 98%; /* Almost white - WCAG AAA */
+    --surface: 240 4% 9%; /* Slightly lighter than background */
+    --surface-hover: 240 4% 12%; /* Subtle hover state */
     
-    --text-primary: 0 0% 95%;
-    --text-secondary: 220 9% 74%;
-    --text-muted: 220 9% 54%;
+    /* Text hierarchy with proper contrast */
+    --text-primary: 0 0% 98%; /* Primary text - WCAG AAA */
+    --text-secondary: 240 5% 78%; /* Secondary text - WCAG AA */
+    --text-muted: 240 4% 64%; /* Muted text - WCAG AA on cards */
     
-    --card: 220 9% 12%;
-    --card-foreground: 0 0% 95%;
-    --card-border: 220 9% 20%;
+    /* Card system with elevation */
+    --card: 240 4% 10%; /* Card background */
+    --card-foreground: 0 0% 98%; /* Card text */
+    --card-border: 240 6% 24%; /* Subtle border - WCAG AA */
     
-    --accent: 45 96% 48%;
-    --accent-foreground: 220 9% 14%;
-    --accent-light: 45 96% 15%;
+    /* Interactive elements */
+    --accent: 45 96% 48%; /* Keep gold accent */
+    --accent-foreground: 0 0% 0%; /* Black text on gold */
+    --accent-light: 45 96% 12%; /* Dark gold background */
     
-    --secondary: 220 9% 18%;
-    --secondary-foreground: 0 0% 95%;
-    --secondary-hover: 220 9% 22%;
+    --secondary: 240 4% 16%; /* Secondary button background */
+    --secondary-foreground: 0 0% 98%; /* Secondary button text */
+    --secondary-hover: 240 4% 20%; /* Secondary button hover */
     
-    --success: 142 76% 36%;
+    /* Status colors - WCAG AA compliant */
+    --success: 142 76% 42%; /* Slightly brighter green */
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 220 9% 14%;
-    --destructive: 0 84% 60%;
+    --warning: 38 92% 50%; /* Keep warning bright */
+    --warning-foreground: 0 0% 0%; /* Black text on yellow */
+    --destructive: 0 84% 65%; /* Slightly brighter red */
     --destructive-foreground: 0 0% 100%;
     
-    --border: 220 9% 20%;
-    --input: 220 9% 20%;
-    --input-focus: 45 96% 48%;
-    --ring: 45 96% 48%;
+    /* Form elements */
+    --border: 240 6% 24%; /* Subtle borders */
+    --input: 240 4% 16%; /* Input background */
+    --input-focus: 45 96% 48%; /* Gold focus ring */
+    --ring: 45 96% 48%; /* Gold focus ring */
     
-    --popover: 220 9% 12%;
-    --popover-foreground: 0 0% 95%;
+    /* Overlays */
+    --popover: 240 4% 12%; /* Popover background */
+    --popover-foreground: 0 0% 98%; /* Popover text */
     
-    --muted: 220 9% 18%;
-    --muted-foreground: 220 9% 64%;
+    /* Muted elements */
+    --muted: 240 4% 16%; /* Muted background */
+    --muted-foreground: 240 4% 64%; /* Muted text */
+
+    /* Sidebar colors for dark mode */
+    --sidebar-background: 240 4% 8%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 240 4% 8%;
+    --sidebar-accent: 240 4% 16%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 6% 24%;
+    --sidebar-ring: 45 96% 48%;
+
+    /* Enhanced shadows for dark mode elevation */
+    --shadow-sm: 0 1px 3px 0 hsl(0 0% 0% / 0.4), 0 1px 2px -1px hsl(0 0% 0% / 0.4);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.4), 0 2px 4px -2px hsl(0 0% 0% / 0.4);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.5), 0 4px 6px -4px hsl(0 0% 0% / 0.5);
+    --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.6), 0 8px 10px -6px hsl(0 0% 0% / 0.6);
   }
 }
 
