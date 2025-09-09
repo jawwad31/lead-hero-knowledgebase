@@ -56,7 +56,7 @@ const Settings = () => {
               </Button>
             </div>
             <p className="text-sm text-text-muted">
-              TODO: Implement file upload functionality
+              Upload functionality will be available soon
             </p>
           </div>
 
@@ -128,11 +128,6 @@ const Settings = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* TODO Block */}
-      <div className="text-sm text-text-muted p-4 bg-muted/50 rounded border border-dashed border-card-border">
-        TODO: Implement file upload for logos, export/import functionality, analytics tracking, and user management settings
-      </div>
     </div>
   );
 };

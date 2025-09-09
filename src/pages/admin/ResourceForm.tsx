@@ -203,7 +203,7 @@ const ResourceForm = () => {
         youtubeUrl: formData.youtubeUrl.trim() || undefined,
         published: formData.published,
         updatedAt: new Date().toISOString(),
-        author: "Admin User", // TODO: Replace with real auth user
+        author: "Admin User",
         description: sanitizedContent.replace(/<[^>]*>/g, '').slice(0, 160),
       };
 
