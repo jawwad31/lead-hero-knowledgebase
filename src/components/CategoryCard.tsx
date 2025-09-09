@@ -22,14 +22,14 @@ const CategoryCard = ({
 }: CategoryCardProps) => {
   return (
     <Card 
-      className="group cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] border-border bg-card"
+      className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1 border-border bg-card"
       onClick={onClick}
     >
-      <CardContent className="p-6">
+      <CardContent className="p-8">
         <div className="flex items-start gap-4">
           {/* Icon */}
-          <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-primary/20">
-            <Icon className="h-6 w-6 text-primary" />
+          <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-primary/20 group-hover:shadow-lg">
+            <Icon className="h-7 w-7 text-primary" />
           </div>
           
           {/* Content */}

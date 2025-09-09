@@ -4,26 +4,26 @@ import { Button } from "@/components/ui/button";
 
 const Hero = () => {
   return (
-    <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary-light via-background to-accent-light">
+    <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary-light via-background to-accent-light">
       <div className="container mx-auto text-center">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-text-primary mb-6">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-text-primary mb-8 leading-tight">
             Find answers to your
-            <span className="text-primary block mt-2">Lead Hero questions</span>
+            <span className="text-primary block mt-3">Lead Hero questions</span>
           </h1>
           
-          <p className="text-lg sm:text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
+          <p className="text-xl sm:text-2xl text-text-secondary mb-12 max-w-3xl mx-auto leading-relaxed">
             Search through our comprehensive collection of guides, SOPs, and tutorials. 
             Everything you need to master Lead Hero is right here.
           </p>
 
           {/* Search Bar */}
-          <div className="max-w-xl mx-auto relative mb-8">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-muted" />
+          <div className="max-w-2xl mx-auto relative mb-12">
+            <Search className="absolute left-6 top-1/2 h-6 w-6 -translate-y-1/2 text-text-muted" />
             <Input
               type="search"
               placeholder="What are you looking for?"
-              className="pl-12 pr-4 py-6 text-lg bg-card border-card-border focus:border-primary shadow-lg"
+              className="pl-16 pr-6 py-8 text-xl bg-card border-card-border focus:border-primary shadow-xl rounded-2xl transition-all duration-300 hover:shadow-2xl focus:shadow-2xl"
             />
           </div>
 
