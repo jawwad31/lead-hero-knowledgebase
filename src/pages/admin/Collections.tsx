@@ -83,20 +83,21 @@ const Collections = () => {
             {categories
               .sort((a, b) => a.order - b.order)
               .map((category) => (
-                <div key={category.id} className="flex items-center gap-4 p-3 border rounded-lg bg-card">
-                  <GripVertical className="h-5 w-5 text-text-muted cursor-grab" />
+                <div key={category.id} className="flex items-center gap-4 p-4 border rounded-xl bg-card hover:shadow-lg hover:-translate-y-0.5 transition-all duration-240 ease-out">
+                  <GripVertical className="h-5 w-5 text-text-muted cursor-grab hover:text-primary transition-colors" />
                   <div className="flex-1">
-                    <div className="font-medium">{category.name}</div>
+                    <div className="font-medium text-text-primary">{category.name}</div>
                     <div className="text-sm text-text-muted">/{category.slug}</div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm">
+                  <div className="flex items-center gap-1">
+                    <Button variant="ghost" size="sm" className="hover:bg-accent-light hover:text-primary">
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button 
                       variant="ghost" 
                       size="sm"
                       onClick={() => handleDeleteCategory(category.id)}
+                      className="hover:bg-destructive/10 hover:text-destructive"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
