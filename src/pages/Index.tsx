@@ -100,7 +100,7 @@ const Index = () => {
         
         <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Back Button */}
-          <div className="mb-8">
+          <div className="mb-8 text-center">
             <Button 
               variant="outline" 
               onClick={handleBackToCategories}
@@ -142,22 +142,12 @@ const Index = () => {
       
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Categories Section */}
-        <div className="mb-12">
+        <div className="mb-12 text-center">
           <h2 className="text-2xl font-bold text-text-primary mb-2">Browse by Category</h2>
           <p className="text-text-secondary mb-8">
             Choose a category to explore related guides, SOPs, and tutorials.
           </p>
           <CategoryGrid onCategorySelect={handleCategorySelect} />
-        </div>
-
-        {/* Recent Resources */}
-        <div className="mb-8">
-          <h3 className="text-xl font-semibold text-text-primary mb-6">Recently Updated</h3>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {demoResources.slice(0, 3).map((resource, index) => (
-              <ResourceCard key={index} {...resource} />
-            ))}
-          </div>
         </div>
       </main>
     </div>
