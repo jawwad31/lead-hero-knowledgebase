@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import ResourceCard from "@/components/ResourceCard";
 import { Search, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { MockResource } from "@/hooks/useMockStore";
 
@@ -68,7 +69,7 @@ const CategoryPage = () => {
 
   // Pagination
   const totalPages = Math.ceil(filteredResources.length / ITEMS_PER_PAGE);
-  const paginatedResources = useMemo(() => {
+  const currentResources = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredResources.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [filteredResources, currentPage]);
@@ -185,91 +186,49 @@ const CategoryPage = () => {
           </div>
         </div>
 
-        {/* Resources Grid */}
-        {paginatedResources.length > 0 ? (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-12">
-            {paginatedResources.map((resource) => (
-              <Card
+        {/* Resource Cards */}
+        {categoryResources.length === 0 ? (
+          <Card className="p-12 text-center">
+            <CardContent>
+              <div className="text-muted-foreground mb-4">
+                No resources in this category yet.
+              </div>
+              <Button variant="outline" onClick={() => navigate("/")}>
+                Back to Knowledge Base
+              </Button>
+            </CardContent>
+          </Card>
+        ) : filteredResources.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {currentResources.map((resource) => (
+              <ResourceCard
                 key={resource.id}
-                className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1"
-                onClick={() => navigate(`/resources/${resource.id}`)}
-              >
-                <CardContent className="p-8">
-                  <div className="space-y-4">
-                    {/* Header */}
-                    <div className="space-y-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <h3 className="text-xl font-semibold text-text-primary group-hover:text-primary transition-colors leading-tight line-clamp-2">
-                          {resource.title}
-                        </h3>
-                        <Badge className={`${getTypeColor(resource.type)} text-xs font-medium px-3 py-1 rounded-full transition-colors whitespace-nowrap`}>
-                          {resource.type.toUpperCase()}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    {/* Tags */}
-                    {resource.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {resource.tags.slice(0, 2).map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="outline"
-                            className="text-xs px-2 py-1 bg-secondary/50 text-text-secondary border-border hover:bg-secondary transition-colors"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                        {resource.tags.length > 2 && (
-                          <Badge
-                            variant="outline"
-                            className="text-xs px-2 py-1 bg-secondary/50 text-text-muted border-border"
-                          >
-                            +{resource.tags.length - 2} more
-                          </Badge>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Footer */}
-                    <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                      <div className="flex items-center gap-2 text-sm text-text-muted">
-                        <Calendar className="h-4 w-4" />
-                        <span>Updated {formatDate(resource.updatedAt)}</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                title={resource.title}
+                type={resource.type}
+                updatedAt={formatDate(resource.updatedAt)}
+                tags={resource.tags}
+                href={`/resources/${resource.id}`}
+              />
             ))}
           </div>
         ) : (
-          /* Empty State */
-          <div className="text-center py-16">
-            <div className="max-w-md mx-auto">
-              <Search className="h-16 w-16 text-text-muted mx-auto mb-6" />
-              <h3 className="text-xl font-semibold text-text-primary mb-3">
-                {searchQuery || typeFilter !== "all" ? "No resources found" : "No resources yet"}
-              </h3>
-              <p className="text-text-secondary mb-6">
-                {searchQuery || typeFilter !== "all" 
-                  ? "Try adjusting your search or filters to find what you're looking for."
-                  : "This category doesn't have any published resources yet. Check back soon!"
-                }
-              </p>
-              {(searchQuery || typeFilter !== "all") && (
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setTypeFilter("all");
-                  }}
-                >
-                  Clear Filters
-                </Button>
-              )}
-            </div>
-          </div>
+          <Card className="p-12 text-center">
+            <CardContent>
+              <div className="text-muted-foreground mb-4">
+                No resources found matching your criteria.
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSearchQuery("");
+                  setTypeFilter("all");
+                  setSortBy("newest");
+                }}
+              >
+                Clear Filters
+              </Button>
+            </CardContent>
+          </Card>
         )}
 
         {/* Pagination */}
