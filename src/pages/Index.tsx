@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import CategoryGrid from "@/components/CategoryGrid";
 import ResourceCard from "@/components/ResourceCard";
@@ -94,10 +93,7 @@ const Index = () => {
     );
 
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        
-        <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Back Button */}
           <div className="mb-8 text-center">
             <Button 
@@ -127,15 +123,13 @@ const Index = () => {
               <p className="text-sm text-text-muted">Check back soon for new content!</p>
             </div>
           )}
-        </main>
-      </div>
+      </main>
     );
   }
 
   // Show category grid by default
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <>
       <Hero />
       
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -148,7 +142,7 @@ const Index = () => {
           <CategoryGrid onCategorySelect={handleCategorySelect} />
         </div>
       </main>
-    </div>
+    </>
   );
 };
 
