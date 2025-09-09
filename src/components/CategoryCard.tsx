@@ -1,29 +1,35 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface CategoryCardProps {
   id: string;
   name: string;
+  slug: string;
   description: string;
   icon: LucideIcon;
   count: number;
   color: string;
-  onClick: () => void;
 }
 
 const CategoryCard = ({ 
   id,
-  name, 
+  name,
+  slug,
   description,
   icon: Icon, 
   count,
-  color,
-  onClick 
+  color
 }: CategoryCardProps) => {
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    navigate(`/categories/${slug}`);
+  };
   return (
     <Card 
       className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1 border-border bg-card"
-      onClick={onClick}
+      onClick={handleClick}
     >
       <CardContent className="p-8">
         <div className="flex items-start gap-4">

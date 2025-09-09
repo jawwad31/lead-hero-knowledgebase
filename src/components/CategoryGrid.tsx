@@ -3,10 +3,10 @@ import { useMockStore } from "@/hooks/useMockStore";
 import { BookOpen, FileText, GraduationCap, Wrench, LucideIcon } from "lucide-react";
 
 interface CategoryGridProps {
-  onCategorySelect: (categoryId: string) => void;
+  // Remove onCategorySelect since we're navigating to dedicated pages now
 }
 
-const CategoryGrid = ({ onCategorySelect }: CategoryGridProps) => {
+const CategoryGrid = ({}: CategoryGridProps) => {
   const { categories, getResourcesByCategory } = useMockStore();
 
   const getCategoryIcon = (slug: string): LucideIcon => {
@@ -52,11 +52,11 @@ const CategoryGrid = ({ onCategorySelect }: CategoryGridProps) => {
               key={category.id}
               id={category.id}
               name={category.name}
+              slug={category.slug}
               description={getCategoryDescription(category.slug)}
               icon={getCategoryIcon(category.slug)}
               count={publishedResourceCount}
               color={getCategoryColor(category.slug)}
-              onClick={() => onCategorySelect(category.id)}
             />
           );
         })}

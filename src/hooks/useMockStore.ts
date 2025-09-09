@@ -254,6 +254,10 @@ export function useMockStore() {
     return categories.find(c => c.id === id);
   }, [categories]);
 
+  const getCategoryBySlug = useCallback((slug: string) => {
+    return categories.find(c => c.slug === slug);
+  }, [categories]);
+
   const getResourcesByCategory = useCallback((categoryId: string) => {
     return resources.filter(r => r.categoryId === categoryId);
   }, [resources]);
@@ -299,6 +303,7 @@ export function useMockStore() {
     updateCategory,
     deleteCategory,
     getCategoryById,
+    getCategoryBySlug,
     
     // Resource operations
     createResource,
