@@ -118,13 +118,36 @@ const CategoryPage = () => {
   // Set page title and meta description
   useEffect(() => {
     if (category) {
-      document.title = `${category.name} · Knowledge Base`;
+      const title = `${category.name} · Lead Hero KB`;
+      const description = `Resources in ${category.name} for Lead Hero CRM.`;
+      const url = window.location.href;
       
-      // Update meta description
-      const metaDescription = document.querySelector('meta[name="description"]');
-      if (metaDescription) {
-        metaDescription.setAttribute('content', `Resources in ${category.name} for Lead Hero CRM.`);
+      document.title = title;
+      
+      // Set or update meta description
+      let metaDescription = document.querySelector('meta[name="description"]');
+      if (!metaDescription) {
+        metaDescription = document.createElement('meta');
+        metaDescription.setAttribute('name', 'description');
+        document.head.appendChild(metaDescription);
       }
+      metaDescription.setAttribute('content', description);
+      
+      // OpenGraph tags
+      const setOrUpdateMeta = (property: string, content: string) => {
+        let meta = document.querySelector(`meta[property="${property}"]`);
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.setAttribute('property', property);
+          document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', content);
+      };
+      
+      setOrUpdateMeta('og:title', title);
+      setOrUpdateMeta('og:description', description);
+      setOrUpdateMeta('og:type', 'website');
+      setOrUpdateMeta('og:url', url);
     }
   }, [category]);
 

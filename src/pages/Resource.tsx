@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, Eye, Search, Home } from "lucide-react";
+import { ArrowLeft, Calendar, Eye, Search, Home, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { sanitizeHtml, addHeadingIds } from "@/utils/sanitizeHtml";
 import { useMockStore } from "@/hooks/useMockStore";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Breadcrumb, 
   BreadcrumbList, 
@@ -21,6 +22,7 @@ import ShareButton from "@/components/ShareButton";
 const Resource = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const { getResourceBySlug, getCategoryById, incrementViewCount, getViewCount } = useMockStore();
   const [resource, setResource] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -53,15 +55,18 @@ const Resource = () => {
     return div.textContent || div.innerText || '';
   };
 
-  // Set SEO meta tags
+  // Set SEO meta tags and OpenGraph
   useEffect(() => {
     if (resource) {
-      document.title = resource.title;
-      
-      // Set meta description
+      const title = `${resource.title} · Lead Hero KB`;
       const textContent = getTextContent(resource.bodyHtml);
       const description = textContent.slice(0, 160);
+      const url = window.location.href;
       
+      // Set page title
+      document.title = title;
+      
+      // Set or update meta description
       let metaDescription = document.querySelector('meta[name="description"]');
       if (!metaDescription) {
         metaDescription = document.createElement('meta');
@@ -69,6 +74,22 @@ const Resource = () => {
         document.head.appendChild(metaDescription);
       }
       metaDescription.setAttribute('content', description);
+      
+      // OpenGraph tags
+      const setOrUpdateMeta = (property: string, content: string) => {
+        let meta = document.querySelector(`meta[property="${property}"]`);
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.setAttribute('property', property);
+          document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', content);
+      };
+      
+      setOrUpdateMeta('og:title', title);
+      setOrUpdateMeta('og:description', description);
+      setOrUpdateMeta('og:type', 'article');
+      setOrUpdateMeta('og:url', url);
     }
   }, [resource]);
 
@@ -160,6 +181,29 @@ const Resource = () => {
   const category = getCategoryById(resource.categoryId);
   const viewCount = getViewCount(resource.id);
   const showTOC = resource.bodyHtml.includes('<h2>') || resource.bodyHtml.includes('<h3>');
+  
+  // Copy link functionality
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link copied",
+        description: "Resource link copied to clipboard",
+      });
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = window.location.href;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      toast({
+        title: "Link copied",
+        description: "Resource link copied to clipboard",
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -205,9 +249,20 @@ const Resource = () => {
                 </Badge>
 
                 {/* Title */}
-                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  {resource.title}
-                </h1>
+                <div className="flex items-start gap-3 mb-4">
+                  <h1 className="text-3xl md:text-4xl font-bold text-foreground flex-1">
+                    {resource.title}
+                  </h1>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopyLink}
+                    className="mt-1 flex-shrink-0"
+                  >
+                    <Copy className="h-4 w-4 mr-2" />
+                    Copy link
+                  </Button>
+                </div>
 
                 {/* Meta Information */}
                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
