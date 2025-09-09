@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { extractHeadings } from "@/utils/sanitizeHtml";
 
 interface TOCItem {
   id: string;
@@ -16,30 +17,9 @@ const TableOfContents = ({ content }: TableOfContentsProps) => {
   const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
-    // Parse H2 and H3 tags from HTML content
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(content, 'text/html');
-    const headings = doc.querySelectorAll('h2, h3');
-    
-    const items: TOCItem[] = [];
-    headings.forEach((heading, index) => {
-      const level = parseInt(heading.tagName.charAt(1));
-      const text = heading.textContent || '';
-      const id = `toc-${index}`;
-      
-      // Add ID to heading if it doesn't have one
-      heading.id = id;
-      
-      items.push({ id, text, level });
-    });
-    
-    setTocItems(items);
-
-    // Update the actual content in the DOM
-    const contentElement = document.querySelector('.resource-content');
-    if (contentElement && items.length > 0) {
-      contentElement.innerHTML = doc.body.innerHTML;
-    }
+    // Extract headings safely using sanitization utility
+    const headings = extractHeadings(content);
+    setTocItems(headings);
   }, [content]);
 
   useEffect(() => {

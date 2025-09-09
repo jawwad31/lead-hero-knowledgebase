@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, Eye, Search, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { sanitizeHtml, addHeadingIds } from "@/utils/sanitizeHtml";
 import { useMockStore } from "@/hooks/useMockStore";
 import { 
   Breadcrumb, 
@@ -242,7 +243,7 @@ const Resource = () => {
               <article className="prose prose-lg max-w-none">
                 <div 
                   className="resource-content"
-                  dangerouslySetInnerHTML={{ __html: resource.bodyHtml }}
+                  dangerouslySetInnerHTML={{ __html: addHeadingIds(sanitizeHtml(resource.bodyHtml)) }}
                 />
               </article>
             </div>
