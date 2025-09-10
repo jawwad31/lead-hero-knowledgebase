@@ -3,7 +3,9 @@ import React from 'react';
 export const highlightText = (text: string, query: string): React.ReactNode => {
   if (!query.trim()) return text;
   
-  const parts = text.split(new RegExp(`(${query})`, 'gi'));
+  // Escape special regex characters in the query to avoid crashes/regex injection
+  const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = text.split(new RegExp(`(${escapedQuery})`, 'gi'));
   
   return parts.map((part, index) => 
     part.toLowerCase() === query.toLowerCase() ? (
