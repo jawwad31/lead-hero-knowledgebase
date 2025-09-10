@@ -43,6 +43,20 @@ DOMPurify.addHook('beforeSanitizeElements', (node) => {
   }
 });
 
+// Harden anchor tags to prevent reverse tabnabbing when target="_blank" is used
+DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+  if (node.nodeName === 'A') {
+    const element = node as Element;
+    const target = element.getAttribute('target');
+    if (target === '_blank') {
+      const existingRel = (element.getAttribute('rel') || '').split(/\s+/);
+      if (!existingRel.includes('noopener')) existingRel.push('noopener');
+      if (!existingRel.includes('noreferrer')) existingRel.push('noreferrer');
+      element.setAttribute('rel', existingRel.filter(Boolean).join(' '));
+    }
+  }
+});
+
 // Sanitize HTML content with strict allow-list
 export const sanitizeHtml = (html: string): string => {
   const cleanHtml = DOMPurify.sanitize(html, {

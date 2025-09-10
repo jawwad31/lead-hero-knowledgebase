@@ -282,7 +282,8 @@ export function useMockStore() {
     const totalResources = resources.length;
     const publishedResources = resources.filter(r => r.published).length;
     const totalViews = Object.values(viewCounts).reduce((sum, count) => sum + count, 0);
-    const recentlyEdited = resources
+    // Avoid mutating state by sorting a shallow copy
+    const recentlyEdited = [...resources]
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
       .slice(0, 5);
 
