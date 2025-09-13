@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
-import { useMockStore } from "@/hooks/useMockStore";
+import { useSupabaseStore } from "@/hooks/useSupabaseStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import ResourceCard from "@/components/ResourceCard";
 import ResourceCardSkeleton from "@/components/ResourceCardSkeleton";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
-import { MockResource } from "@/hooks/useMockStore";
+import { Resource } from "@/types/database";
 import { 
   Breadcrumb, 
   BreadcrumbList, 
@@ -31,7 +31,7 @@ const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { categories, getResourcesByCategory, getCategoryById } = useMockStore();
+  const { categories, getResourcesByCategory, getCategoryById, loading, error } = useSupabaseStore();
   
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || "");
   const [typeFilter, setTypeFilter] = useState<string>(searchParams.get('type') || "all");

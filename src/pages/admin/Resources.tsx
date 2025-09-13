@@ -4,16 +4,46 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Edit, Eye, Trash2 } from "lucide-react";
-import { useMockStore } from "@/hooks/useMockStore";
+import { useSupabaseStore } from "@/hooks/useSupabaseStore";
 
 const Resources = () => {
-  const { resources, categories, deleteResource, getCategoryById, getViewCount } = useMockStore();
+  const { resources, categories, deleteResource, getCategoryById, getViewCount, loading, error } = useSupabaseStore();
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this resource?')) {
-      deleteResource(id);
+      try {
+        await deleteResource(id);
+      } catch (error) {
+        console.error('Error deleting resource:', error);
+      }
     }
   };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-text-secondary">Loading resources...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <p className="text-destructive mb-4">Error loading resources</p>
+            <p className="text-text-secondary text-sm">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -49,7 +79,7 @@ const Resources = () => {
             </TableHeader>
             <TableBody>
               {resources.map((resource) => {
-                const category = getCategoryById(resource.categoryId);
+                const category = getCategoryById(resource.category_id);
                 const viewCount = getViewCount(resource.id);
                 
                 return (
@@ -71,7 +101,7 @@ const Resources = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {new Date(resource.updatedAt).toLocaleDateString()}
+                      {new Date(resource.updated_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">

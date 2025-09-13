@@ -1,5 +1,6 @@
 import CategoryCard from "./CategoryCard";
-import { useMockStore } from "@/hooks/useMockStore";
+import { useSupabaseStore } from "@/hooks/useSupabaseStore";
+import { useFallbackStore } from "@/hooks/useFallbackStore";
 import { BookOpen, FileText, GraduationCap, Wrench, LucideIcon } from "lucide-react";
 
 interface CategoryGridProps {
@@ -7,7 +8,15 @@ interface CategoryGridProps {
 }
 
 const CategoryGrid = ({}: CategoryGridProps) => {
-  const { categories, getResourcesByCategory } = useMockStore();
+  // Check if Supabase is configured
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+  const isSupabaseConfigured = supabaseUrl && supabaseAnonKey && supabaseUrl !== 'your_supabase_project_url'
+  
+  const supabaseStore = useSupabaseStore()
+  const fallbackStore = useFallbackStore()
+  
+  const { categories, getResourcesByCategory, loading, error } = isSupabaseConfigured ? supabaseStore : fallbackStore
 
   const getCategoryIcon = (slug: string): LucideIcon => {
     const iconMap: Record<string, LucideIcon> = {
@@ -38,6 +47,26 @@ const CategoryGrid = ({}: CategoryGridProps) => {
     };
     return descMap[slug] || "Knowledge base resources";
   };
+
+  if (loading) {
+    return (
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="animate-pulse">
+            <div className="bg-surface rounded-lg p-6 h-32"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-destructive">Error loading categories: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

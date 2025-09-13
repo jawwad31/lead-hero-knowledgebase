@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, AlertCircle } from "lucide-react";
-import { useMockStore } from "@/hooks/useMockStore";
+import { useSupabaseStore } from "@/hooks/useSupabaseStore";
 import { useToast } from "@/hooks/use-toast";
 import { sanitizeHtml, slugify, validateEmbedUrl } from "@/utils/sanitizeHtml";
 
@@ -23,7 +23,7 @@ const ResourceForm = () => {
     categories, 
     createResource, 
     updateResource 
-  } = useMockStore();
+  } = useSupabaseStore();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -47,11 +47,11 @@ const ResourceForm = () => {
           title: resource.title,
           slug: resource.slug,
           type: resource.type,
-          category: resource.categoryId,
+          category: resource.category_id,
           tags: resource.tags.join(", "),
-          content: resource.bodyHtml,
-          youtubeUrl: resource.youtubeUrl || "",
-          ogImage: resource.ogImage || "",
+          content: resource.body_html,
+          youtubeUrl: resource.youtube_url || "",
+          ogImage: resource.og_image || "",
           published: resource.published,
         });
       }
@@ -196,7 +196,7 @@ const ResourceForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!checkValidation()) {
@@ -215,25 +215,24 @@ const ResourceForm = () => {
         title: formData.title.trim(),
         slug: formData.slug.trim(),
         type: formData.type as 'guide' | 'sop' | 'tutorial',
-        categoryId: formData.category,
+        category_id: formData.category,
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-        bodyHtml: sanitizedContent,
-        youtubeUrl: formData.youtubeUrl.trim() || undefined,
-        ogImage: formData.ogImage.trim() || undefined,
+        body_html: sanitizedContent,
+        youtube_url: formData.youtubeUrl.trim() || undefined,
+        og_image: formData.ogImage.trim() || undefined,
         published: formData.published,
-        updatedAt: new Date().toISOString(),
         author: "Admin User",
         description: sanitizedContent.replace(/<[^>]*>/g, '').slice(0, 160),
       };
 
       if (isEdit && id) {
-        updateResource(id, resourceData);
+        await updateResource(id, resourceData);
         toast({
           title: "Resource updated",
           description: "The resource has been successfully updated.",
         });
       } else {
-        createResource(resourceData);
+        await createResource(resourceData);
         toast({
           title: "Resource created",
           description: "The new resource has been successfully created.",
@@ -242,6 +241,7 @@ const ResourceForm = () => {
       
       navigate("/admin/resources");
     } catch (error) {
+      console.error('Error saving resource:', error);
       toast({
         title: "Error",
         description: "Failed to save the resource. Please try again.",

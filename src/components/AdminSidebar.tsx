@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -7,6 +7,8 @@ import {
   LogOut,
   Home
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import {
   Sidebar,
   SidebarContent,
@@ -30,6 +32,26 @@ const adminItems = [
 
 export function AdminSidebar() {
   const { state } = useSidebar();
+  const { signOut } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+      navigate("/login");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to log out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
   const location = useLocation();
   const currentPath = location.pathname;
   const isCollapsed = state === "collapsed";
@@ -113,6 +135,7 @@ export function AdminSidebar() {
             variant="ghost" 
             size={isCollapsed ? "icon" : "default"}
             className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200"
+            onClick={handleLogout}
           >
             <LogOut className="h-4 w-4 flex-shrink-0" />
             {!isCollapsed && <span className="ml-3 text-sm">Logout</span>}

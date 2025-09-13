@@ -5,7 +5,7 @@ import { ArrowLeft, Calendar, Eye, Search, Home, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { sanitizeHtml, addHeadingIds } from "@/utils/sanitizeHtml";
-import { useMockStore } from "@/hooks/useMockStore";
+import { useSupabaseStore } from "@/hooks/useSupabaseStore";
 import { useToast } from "@/hooks/use-toast";
 import { MetaTags } from "@/components/SEO/MetaTags";
 import { ArticleStructuredData } from "@/components/SEO/StructuredData";
@@ -27,7 +27,7 @@ const Resource = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { getResourceBySlug, getCategoryById, incrementViewCount, getViewCount } = useMockStore();
+  const { getResourceBySlug, getCategoryById, incrementViewCount, getViewCount, loading, error } = useSupabaseStore();
   const [resource, setResource] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 

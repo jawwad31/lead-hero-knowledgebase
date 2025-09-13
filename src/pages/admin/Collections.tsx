@@ -3,18 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, GripVertical, Edit, Trash2 } from "lucide-react";
-import { useMockStore } from "@/hooks/useMockStore";
+import { useSupabaseStore } from "@/hooks/useSupabaseStore";
 import { useToast } from "@/hooks/use-toast";
 
 const Collections = () => {
-  const { categories, createCategory, updateCategory, deleteCategory } = useMockStore();
+  const { categories, createCategory, updateCategory, deleteCategory, loading, error } = useSupabaseStore();
   const { toast } = useToast();
   const [newCategoryName, setNewCategoryName] = useState("");
 
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     if (newCategoryName.trim()) {
       try {
-        createCategory({
+        await createCategory({
           name: newCategoryName,
           slug: newCategoryName.toLowerCase().replace(/\s+/g, '-'),
           order: categories.length + 1
@@ -25,6 +25,7 @@ const Collections = () => {
           description: "The new category has been successfully created.",
         });
       } catch (error) {
+        console.error('Error creating category:', error);
         toast({
           title: "Error",
           description: "Failed to create category. Please try again.",
@@ -34,13 +35,22 @@ const Collections = () => {
     }
   };
 
-  const handleDeleteCategory = (id: string) => {
+  const handleDeleteCategory = async (id: string) => {
     if (confirm('Are you sure you want to delete this category?')) {
-      deleteCategory(id);
-      toast({
-        title: "Category deleted",
-        description: "The category has been successfully deleted.",
-      });
+      try {
+        await deleteCategory(id);
+        toast({
+          title: "Category deleted",
+          description: "The category has been successfully deleted.",
+        });
+      } catch (error) {
+        console.error('Error deleting category:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete category. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
